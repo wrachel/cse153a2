@@ -1,1 +1,3 @@
-*.mid
+bach_chorales/generated_midi/
+bach_chorales/models/
+bach_chorales/runs/
