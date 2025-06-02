@@ -248,16 +248,31 @@ def get_notes_on_at_position(voices_note_infos: List[List[NoteInfo]], position: 
                 yield note_info
 
 def get_voice_tuples(voices_note_infos: List[List[NoteInfo]]):
-    """Generator that yields tuples of notes at each time step"""
+    """Fixed version that preserves voice ordering"""
     last_pos = get_last_pos(voices_note_infos)
     
     for cur_pos in np.arange(0, last_pos, 0.25):
-        notes_on_pos = list(get_notes_on_at_position(voices_note_infos, cur_pos))
-        note_numbers = tuple(note.pitch for note in notes_on_pos)
-        yield note_numbers
+        # Get notes for each voice separately, in order
+        voice_notes = []
+        
+        for voice_idx in range(4):  # Soprano, Alto, Tenor, Bass
+            voice_note_infos = voices_note_infos[voice_idx]
+            
+            # Find note playing in this voice at this time
+            note_for_voice = None
+            for note_info in voice_note_infos:
+                if note_info.is_on_at_beat(cur_pos):
+                    note_for_voice = note_info.pitch
+                    break
+            
+            voice_notes.append(note_for_voice)
+        
+        # Filter out None values and create tuple
+        filtered_notes = [note for note in voice_notes if note is not None]
+        yield tuple(filtered_notes)
 
 def generate_tuple_form(voices_note_infos: List[List[NoteInfo]]) -> List[Tuple[int]]:
-    """Convert NoteInfo format back to tuple format"""
+    """Fixed version that preserves voice ordering"""
     song_tuple_form = []
     
     for current_voice_tuple in get_voice_tuples(voices_note_infos):

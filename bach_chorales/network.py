@@ -359,7 +359,7 @@ class HarmonizationTrainer:
             batch_count += 1
             
             # Update training metrics periodically
-            if batch_idx % 10 == 0:  # More frequent logging for smaller datasets
+            if batch_idx % 1000 == 0:  # More frequent logging for smaller datasets
                 self.training_metrics.update_batch_metrics(
                     alto_pred, tenor_pred, bass_pred,
                     alto_target, tenor_target, bass_target
